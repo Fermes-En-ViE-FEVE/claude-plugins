@@ -1,0 +1,21 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "feve",
+  "description": "Marketplace de plugins Claude Code partagés chez Feve : skills communs (communication, dev, qualité) maintenus à une seule source de vérité et distribués à toute l'équipe.",
+  "owner": {
+    "name": "Feve",
+    "email": "tech@feve.co"
+  },
+  "plugins": [
+    {
+      "name": "check-wording",
+      "source": "./plugins/check-wording",
+      "description": "Relit un texte en français (email, post, page, copie) : orthographe, typographie française, cohérence du registre (tutoiement/vouvoiement) et conformité au ton. Demande d'abord le contexte puis produit un rapport priorisé.",
+      "category": "communication",
+      "version": "0.1.0",
+      "author": {
+        "name": "Feve"
+      }
+    }
+  ]
+}

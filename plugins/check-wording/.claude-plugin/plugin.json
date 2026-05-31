@@ -1,0 +1,16 @@
+{
+  "name": "check-wording",
+  "description": "Relecture de communication écrite en français : orthographe, typographie, registre (tutoiement/vouvoiement) et ton, adaptée au contexte fourni par l'utilisateur. Charte de ton Feve embarquée.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Feve"
+  },
+  "keywords": [
+    "relecture",
+    "orthographe",
+    "typographie",
+    "ton de voix",
+    "communication",
+    "français"
+  ]
+}
