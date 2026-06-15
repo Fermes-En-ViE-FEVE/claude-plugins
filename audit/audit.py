@@ -143,8 +143,8 @@ def judge_ton(charte: str, registre: str, texte: str, model: str, api_key: str) 
         "temperature": 0.2,
         # Plafond indispensable : sinon OpenRouter reserve le cout MAX possible de la
         # sortie (enorme sur les gros modeles) et refuse en 402 si le solde est juste.
-        # 1500 tokens suffisent largement pour ~6 findings en JSON.
-        "max_tokens": 1500,
+        # 2500 tokens : assez pour ~6 findings verbeux sans tronquer le JSON.
+        "max_tokens": 2500,
         "messages": [
             {"role": "system", "content": system},
             {"role": "user", "content": texte[:16000]},
@@ -245,11 +245,15 @@ def fmt_registre(page: dict) -> str:
     return f"registre tu={tu}/vous={vous}{suffix}"
 
 
-def render_slack(pages: list[dict], new_keys: set[str], when: str, model: str) -> str:
-    total_new = len(new_keys)
+def render_slack(pages: list[dict], new_keys: set[str], when: str, model: str,
+                 baseline_existed: bool) -> str:
     lines = [f"*Audit wording — {when}*  _(modele: {model})_"]
-    if new_keys:
-        lines.append(f"🆕 *{total_new} nouveaute(s)* depuis le dernier run")
+    if not baseline_existed:
+        lines.append("📋 Premier run — référence établie pour le suivi des prochains audits.")
+    elif new_keys:
+        lines.append(f"🆕 *{len(new_keys)} nouveauté(s)* depuis le dernier run")
+    else:
+        lines.append("✅ Aucune nouveauté depuis le dernier run.")
     lines.append("")
 
     for p in pages:
@@ -400,9 +404,10 @@ def main() -> int:
             except Exception:  # noqa: BLE001 — etat corrompu = on repart de zero
                 baseline = set()
     new_keys = all_keys - baseline
+    baseline_existed = bool(baseline)
 
     when = datetime.now(timezone.utc).strftime("%d/%m/%Y")
-    report = render_slack(results, new_keys, when, model)
+    report = render_slack(results, new_keys, when, model, baseline_existed)
 
     can_deliver = bool(
         os.environ.get("SLACK_WEBHOOK_URL") or (slack_bot_token() and slack_channel())
@@ -413,7 +418,8 @@ def main() -> int:
         print(report)
     else:
         via = deliver(report)
-        print(f"✅ Rapport poste sur Slack via {via} ({len(new_keys)} nouveaute(s)).", file=sys.stderr)
+        summary = "premier run" if not baseline_existed else f"{len(new_keys)} nouveaute(s)"
+        print(f"✅ Rapport poste sur Slack via {via} ({summary}).", file=sys.stderr)
 
     if state_file is not None:
         state_file.write_text(json.dumps(sorted(all_keys), ensure_ascii=False, indent=0),
