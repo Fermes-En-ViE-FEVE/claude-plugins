@@ -141,6 +141,10 @@ def judge_ton(charte: str, registre: str, texte: str, model: str, api_key: str) 
     body = json.dumps({
         "model": model,
         "temperature": 0.2,
+        # Plafond indispensable : sinon OpenRouter reserve le cout MAX possible de la
+        # sortie (enorme sur les gros modeles) et refuse en 402 si le solde est juste.
+        # 1500 tokens suffisent largement pour ~6 findings en JSON.
+        "max_tokens": 1500,
         "messages": [
             {"role": "system", "content": system},
             {"role": "user", "content": texte[:16000]},
