@@ -3,3 +3,10 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Secrets locaux (OpenRouter, Slack…) — jamais commités
+.env
+.env.local
+
+# Etat runtime de l'audit (delta run-vs-run)
+audit/.state/

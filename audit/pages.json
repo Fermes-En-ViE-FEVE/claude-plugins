@@ -1,0 +1,20 @@
+{
+  "_doc": "Pages auditees periodiquement par audit.py. Le 'registre' (tu/vous) attendu est PAR page : c'est lui qui remplace la question interactive du skill check-wording. ⚠️ Valeurs a confirmer par Alexandre (devine = 'tu' partout pour le POC).",
+  "pages": [
+    {
+      "label": "feve.co — home",
+      "url": "https://feve.co/",
+      "registre": "tu"
+    },
+    {
+      "label": "lagrange — home deconnectee",
+      "url": "https://lagrange.feve.co/",
+      "registre": "tu"
+    },
+    {
+      "label": "legrenier — home deconnectee",
+      "url": "https://legrenier.feve.co/",
+      "registre": "tu"
+    }
+  ]
+}
