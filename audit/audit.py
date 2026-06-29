@@ -160,21 +160,133 @@ def judge_ton(charte: str, registre: str, texte: str, model: str, api_key: str) 
     return parse_findings(content)
 
 
-# --- Filtrage des faux positifs (cf. charte §8) -------------------------------
-# La marque s'ecrit FEVE/Feve sans accent : LanguageTool veut "fève/fête/rêve",
-# c'est un faux positif systematique. On le retire ici (la couche objective ne le
-# faisait pas, c'etait le job de Claude dans le skill interactif).
-BRAND_TOKENS = {"feve"}
+# --- Tri des remontees ortho : fiables vs "mots inconnus" ---------------------
+# LanguageTool est un dico generaliste. Sur une page Feve (noms de fermes, sigles
+# du secteur : ESUS, Finansol, IFI...), la regle "faute de frappe" crache surtout
+# des noms propres -> bruit. On separe ces "mots inconnus" du compte principal pour
+# ne pas noyer les vraies remontees (grammaire, accords, typo, typos minuscules).
+SPELLING_RULE = "FR_SPELLING_RULE"
+# Marque ecrite sans accent : LanguageTool veut "fève/fêtes/rêves" -> faux positif
+# systematique, retire entierement (meme pas affiche comme mot inconnu).
+BRAND_TOKENS = {"feve", "feves", "fève", "fèves", "eve", "ève"}
+# Regles LanguageTool ignorees dans l'audit : soit le conseil est faux sur de la
+# copie marketing (chiffres -> lettres alors qu'on veut "9 experts", "55 fermes"),
+# soit la regle est trop peu fiable sur du texte web "aplati" en fragments (accord
+# d'adjectif detache faussement signale sur une enumeration ; "phrase incomplete" /
+# point ou majuscule manquants declenches par des bouts de texte isoles).
+NOISY_RULES = {
+    "AGREEMENT_POSTPONED_ADJ",
+    "NOMBRES_EN_LETTRES_2",
+    "NOMBRES_EN_LETTRES_2_IMPROVED",
+    "DETERMINER_SENT_END",
+    "D_N",
+    "POINT",
+    "UPPERCASE_SENTENCE_START",
+}
 
 
-def filter_ortho(matches: list[dict]) -> list[dict]:
-    kept = []
+def _looks_like_proper_noun(token: str) -> bool:
+    """Heuristique : un mot inconnu capitalise, en capitales, ou contenant un
+    chiffre est quasi toujours un nom propre / sigle (ESUS, Bonfossé, France2),
+    pas une faute de frappe. Les vrais typos (souhaitesconstruire) sont minuscules."""
+    t = token.strip()
+    if not t:
+        return False
+    if any(c.isdigit() for c in t):
+        return True
+    return t[0].isupper()
+
+
+def split_ortho(matches: list[dict]) -> tuple[list[dict], list[dict], list[dict]]:
+    """Pre-filtre heuristique (cheap) avant arbitrage IA. Retourne 3 listes :
+
+      - reliable  : regles non-orthographe (grammaire, accord, typo) = haute confiance ;
+      - ambiguous : "faute de frappe" sur mot MINUSCULE = a trancher par l'IA
+        (vrai typo comme 'souhaitesconstruire' vs jargon comme 'terdecies') ;
+      - unknown   : "faute de frappe" sur mot capitalise/sigle/chiffre = nom propre
+        quasi certain, ecarte sans deranger l'IA (economise des tokens).
+    Les faux positifs de marque (feve/fève...) et les regles bruyantes sont jetes."""
+    reliable: list[dict] = []
+    ambiguous: list[dict] = []
+    unknown: list[dict] = []
     for o in matches:
-        token = (o.get("context_match") or "").strip().lower()
-        if token in BRAND_TOKENS:
+        token = (o.get("context_match") or "").strip()
+        if token.lower() in BRAND_TOKENS:
             continue
-        kept.append(o)
-    return kept
+        if o.get("rule") in NOISY_RULES:
+            continue
+        if o.get("rule") == SPELLING_RULE:
+            (unknown if _looks_like_proper_noun(token) else ambiguous).append(o)
+        else:
+            reliable.append(o)
+    return reliable, ambiguous, unknown
+
+
+def _parse_ortho_verdict(content: str, n: int) -> set[int]:
+    """Extrait l'ensemble des indices "vraies fautes" du JSON IA (tolere les ``` et
+    le texte autour). Leve si rien n'est parsable -> le caller degrade en sur."""
+    s = re.sub(r"^```(?:json)?|```$", "", content.strip(), flags=re.MULTILINE).strip()
+    candidates = []
+    m = re.search(r"\{.*\}", s, re.DOTALL)
+    if m:
+        candidates.append(m.group(0))
+    candidates.append(s)
+    for cand in candidates:
+        try:
+            data = json.loads(cand)
+        except json.JSONDecodeError:
+            continue
+        raw = data.get("vraies_fautes", []) if isinstance(data, dict) else []
+        keep: set[int] = set()
+        for x in raw:
+            try:
+                i = int(x)
+            except (ValueError, TypeError):
+                continue
+            if 0 <= i < n:
+                keep.add(i)
+        return keep
+    raise ValueError("verdict ortho IA non parsable")
+
+
+def adjudicate_ortho(candidates: list[dict], model: str, api_key: str) -> tuple[list[dict], list[dict]]:
+    """Fait trancher par l'IA les remontees ortho ambigues (mots minuscules inconnus
+    du dico) : vraie faute de francais vs nom propre / terme metier / mot rare correct.
+    Retourne (confirmees, rejetees). Leve en cas d'echec -> le caller degrade en sur."""
+    listing = "\n".join(
+        f'{i}. "{(o.get("context_match") or "").strip()}"'
+        f' — contexte : «{(o.get("context") or "").strip()[:140]}»'
+        f' — suggestions LT : {", ".join(s for s in (o.get("suggestions") or [])[:3] if s) or "(aucune)"}'
+        for i, o in enumerate(candidates)
+    )
+    system = (
+        "Tu es relecteur francais. LanguageTool a signale ces mots comme inconnus de son "
+        "dictionnaire. Pour chacun, juge d'apres le contexte si c'est une VRAIE faute de "
+        "francais (mot mal orthographie, mots colles sans espace, accent fautif) ou un FAUX "
+        "POSITIF (nom propre, marque, sigle, terme metier/juridique, mot rare mais correct).\n"
+        "Reponds UNIQUEMENT en JSON, sans texte autour : {\"vraies_fautes\": [numeros]} ou "
+        "[numeros] sont les indices des vraies fautes. Liste vide si tout est faux positif."
+    )
+    body = json.dumps({
+        "model": model,
+        "temperature": 0,
+        "max_tokens": 300,
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": listing},
+        ],
+    }).encode("utf-8")
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "X-Title": "feve-audit-wording",
+    }
+    payload = _openrouter_post(body, headers)
+    content = payload["choices"][0]["message"]["content"]
+    keep = _parse_ortho_verdict(content, len(candidates))
+    confirmed = [o for i, o in enumerate(candidates) if i in keep]
+    rejected = [o for i, o in enumerate(candidates) if i not in keep]
+    return confirmed, rejected
 
 
 # --- Audit d'une page ---------------------------------------------------------
@@ -195,10 +307,27 @@ def audit_page(page: dict, cf, charte: str, model: str, api_key: str) -> dict:
     out["typographie"] = cf.check_typography(texte)
 
     try:
-        out["orthographe"] = filter_ortho(cf.check_orthographe(texte))
+        reliable, ambiguous, unknown = split_ortho(cf.check_orthographe(texte))
     except (Exception, SystemExit) as e:  # check-fr leve SystemExit si LT injoignable
         out["orthographe"] = []
+        out["mots_inconnus"] = []
         out["orthographe_error"] = str(e)
+    else:
+        # L'IA tranche le reste ambigu (jargon minuscule). Si l'appel echoue ou
+        # qu'il n'y a pas de cle, on garde tous les candidats (degradation sure).
+        if api_key and ambiguous:
+            try:
+                confirmed, rejected = adjudicate_ortho(ambiguous, model, api_key)
+                reliable += confirmed
+                unknown += rejected
+            except Exception as e:  # noqa: BLE001
+                reliable += ambiguous
+                out["ortho_adjudication_error"] = str(e)
+        else:
+            reliable += ambiguous
+        reliable.sort(key=lambda o: o.get("rule") == SPELLING_RULE)  # ortho en dernier
+        out["orthographe"] = reliable
+        out["mots_inconnus"] = unknown
 
     if api_key:
         try:
@@ -267,6 +396,16 @@ def render_slack(pages: list[dict], new_keys: set[str], when: str, model: str,
         lines.append(f"*{p['label']}*  <{p['url']}>")
         head = f"ortho: {n_ortho} · typo: {n_typo} · {fmt_registre(p)} · ton: {n_ton} finding(s)"
         lines.append(head)
+        # Mots inconnus du dico (noms propres / jargon) : comptés à part, jamais
+        # mélangés aux vraies remontées — sinon le rapport donne des points randoms.
+        unknown = p.get("mots_inconnus", [])
+        if unknown:
+            ex = list(dict.fromkeys(
+                (o.get("context_match") or "").strip()
+                for o in unknown if (o.get("context_match") or "").strip()
+            ))[:6]
+            lines.append(f"   mots inconnus du dico : {len(unknown)} "
+                         f"(noms propres / jargon probables, non comptés) — ex. {', '.join(ex)}")
         # Typo : on groupe par regle (sinon 148 lignes illisibles).
         typo_groups = Counter(t.get("message") for t in p.get("typographie", []))
         if typo_groups:
@@ -274,6 +413,8 @@ def render_slack(pages: list[dict], new_keys: set[str], when: str, model: str,
             lines.append(f"   typo principale : {top}")
         if p.get("orthographe_error"):
             lines.append(f"   _ortho non verifiee : {p['orthographe_error']}_")
+        if p.get("ortho_adjudication_error"):
+            lines.append(f"   _ortho non arbitree par IA (heuristique seule) : {p['ortho_adjudication_error']}_")
         if p.get("ton_error"):
             lines.append(f"   _ton non verifie : {p['ton_error']}_")
         # Top findings de ton (les plus impactants, max 5)
@@ -290,13 +431,24 @@ def render_slack(pages: list[dict], new_keys: set[str], when: str, model: str,
                 line += f" → {sugg}"
             lines.append(line)
         # Quelques exemples d'ortho (3 max) pour donner a voir
-        for o in p.get("orthographe", [])[:3]:
+        # On dédoublonne par (message, extrait) pour ne pas gaspiller un slot
+        # d'affichage sur une même remontée répétée (ex. « carte cadeau » ×2).
+        shown = 0
+        seen_ex: set[tuple[str, str]] = set()
+        for o in p.get("orthographe", []):
             msg = (o.get("shortMessage") or o.get("message") or "").strip()
+            cm = o.get("context_match", "")
+            if (msg, cm) in seen_ex:
+                continue
+            seen_ex.add((msg, cm))
             sugg = ", ".join(s for s in (o.get("suggestions") or [])[:2] if s)
             tail = f" → {sugg}" if sugg else ""
-            lines.append(f"   · ortho: {msg} (« {o.get('context_match', '')} »){tail}")
-        if n_ortho > 3:
-            lines.append(f"   _… +{n_ortho - 3} autres remontees ortho_")
+            lines.append(f"   · ortho: {msg} (« {cm} »){tail}")
+            shown += 1
+            if shown >= 5:
+                break
+        if n_ortho > shown:
+            lines.append(f"   _… +{n_ortho - shown} autres remontees ortho_")
         lines.append("")
     return "\n".join(lines).strip()
 

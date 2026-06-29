@@ -46,31 +46,76 @@ class TextExtractor(HTMLParser):
         "p", "div", "section", "article", "header", "footer", "li", "h1", "h2",
         "h3", "h4", "h5", "h6", "br", "tr", "td", "th",
     }
+    # Éléments « autonomes » : liens et boutons portent en général un libellé
+    # indépendant (nav, CTA, cartes). On les sépare par un saut de ligne, sinon
+    # LanguageTool lit deux libellés voisins comme une même phrase et signale de
+    # faux « majuscule en milieu de phrase » / « espace avant point ».
+    SEGMENT_TAGS = {"a", "button"}
+    # Ponctuation qui ne se fait jamais précéder d'une espace en français : on
+    # n'insère pas d'espace inline juste devant (« mot . » resterait fautif).
+    ATTACH_PUNCT = ".,…)]}"
 
     def __init__(self) -> None:
         super().__init__()
         self._buf: list[str] = []
         self._skip_depth = 0
+        # Une frontière inline a été franchie (ex. </a><a>) : on attend le
+        # prochain texte pour décider d'insérer un espace, afin de ne pas coller
+        # deux mots de balises voisines (« trouvéeAcheter »).
+        self._pending_space = False
+
+    def _flush_pending(self, nxt: str = "") -> None:
+        """Matérialise une séparation inline en espace — sauf si ça collerait à
+        une élision (l'/d'/j'…) ou si le texte suivant démarre par une ponctuation
+        qui s'attache au mot précédent (« mot . » → « mot. »)."""
+        if not self._pending_space:
+            return
+        self._pending_space = False
+        if not (self._buf and self._buf[-1]):
+            return
+        if self._buf[-1][-1] in " \n\t'’":
+            return
+        nstrip = nxt.lstrip()
+        if nstrip and nstrip[0] in self.ATTACH_PUNCT:
+            return
+        self._buf.append(" ")
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         if tag in self.SKIP_TAGS:
             self._skip_depth += 1
-        elif tag == "img":
+            return
+        if self._skip_depth:
+            return
+        if tag in self.BREAK_TAGS or tag in self.SEGMENT_TAGS:
+            self._buf.append("\n")
+            self._pending_space = False
+            return
+        if tag == "img":
             for k, v in attrs:
                 if k == "alt" and v:
                     self._buf.append(f" {v} ")
-        if tag in self.BREAK_TAGS:
-            self._buf.append("\n")
+        # Tout autre tag est inline de mise en forme (span, strong, em…) : il
+        # sépare le texte de part et d'autre sans le couper en lignes.
+        self._pending_space = True
 
     def handle_endtag(self, tag: str) -> None:
-        if tag in self.SKIP_TAGS and self._skip_depth > 0:
-            self._skip_depth -= 1
-        if tag in self.BREAK_TAGS:
+        if tag in self.SKIP_TAGS:
+            if self._skip_depth > 0:
+                self._skip_depth -= 1
+            return
+        if self._skip_depth:
+            return
+        if tag in self.BREAK_TAGS or tag in self.SEGMENT_TAGS:
             self._buf.append("\n")
+            self._pending_space = False
+            return
+        self._pending_space = True
 
     def handle_data(self, data: str) -> None:
-        if self._skip_depth == 0:
-            self._buf.append(data)
+        if self._skip_depth:
+            return
+        self._flush_pending(data)
+        self._buf.append(data)
 
     def text(self) -> str:
         raw = "".join(self._buf)
