@@ -8,6 +8,9 @@ description: >-
   qu'on veut vérifier ou nettoyer un texte avant de l'envoyer/publier. Le skill
   DEMANDE D'ABORD le contexte (registre, ton, audience) car il varie selon
   l'applicatif Feve, puis produit un rapport priorisé sans rien modifier sans accord.
+allowed-tools:
+  - Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/check-fr.py *)
+  - Bash(printf *)
 ---
 
 Tu vas relire un texte français et produire un **rapport priorisé et actionnable**.
@@ -43,10 +46,10 @@ Le script est bundlé dans le plugin. Lance-le selon la source :
 
 ```bash
 # Fichier (txt, md, html — le HTML est nettoyé automatiquement)
-python3 "${CLAUDE_PLUGIN_ROOT}/skills/check-wording/scripts/check-fr.py" <chemin>
+python3 ${CLAUDE_SKILL_DIR}/scripts/check-fr.py <chemin>
 
 # Texte collé : passe-le sur stdin
-printf '%s' "<le texte>" | python3 "${CLAUDE_PLUGIN_ROOT}/skills/check-wording/scripts/check-fr.py" --stdin
+printf '%s' "<le texte>" | python3 ${CLAUDE_SKILL_DIR}/scripts/check-fr.py --stdin
 ```
 
 ⏱ ~10-15 s (appel à LanguageTool, tier gratuit). Capture la sortie JSON, parse-la.
@@ -67,7 +70,7 @@ Le JSON contient :
 Lis la charte transverse embarquée :
 
 ```
-${CLAUDE_PLUGIN_ROOT}/skills/check-wording/references/ton-de-voix-feve.md
+${CLAUDE_SKILL_DIR}/references/ton-de-voix-feve.md
 ```
 
 Puis relis le texte et identifie 0 à 5 passages problématiques selon la charte ET

@@ -30,16 +30,16 @@ jobs:
       SLACK_CHANNEL: ${{ vars.SLACK_CHANNEL || 'test-automatisation' }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
       # Restaure l'etat du run precedent -> permet le delta (ne signaler que le nouveau).
       # Best-effort : si le cache a expire, le run signale tout (degradation sure).
       - name: Restaure l'etat (delta)
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: audit/.state
           key: audit-state-${{ github.run_id }}
