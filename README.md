@@ -20,15 +20,33 @@ Claude Code). Prends la ligne qui correspond.
 
 | Tu utilises | Ce que tu fais |
 |---|---|
-| Claude Chat ou Cowork | Le ZIP du skill, ci-dessous. Aucune ligne de commande. |
-| L'app desktop, onglet Code | Bouton **+** → **Plugins** → **Add plugin**. |
+| Chat (web ou app) ou Cowork, plan payant | Ajouter ce marketplace dans **Customize**, puis installer. Rien à télécharger. |
+| Chat sur un plan Free | Le ZIP du skill : les plugins demandent un plan payant, les skills non. |
 | Claude Code en terminal | `/plugin marketplace add` puis `/plugin install`. |
 
-### Chat et Cowork : déposer le ZIP du skill
+### Chat et Cowork : ajouter le marketplace depuis Customize
 
-Cowork et les sessions cloud ne lisent rien de ce qui est installé sur ta machine :
-ils chargent les skills activés sur ton **compte claude.ai**. C'est donc là que ça se
-passe, et ça marche sur tous les plans, y compris Free et les comptes persos.
+Les plugins s'installent depuis l'interface, sans terminal et sans passer par un
+catalogue Anthropic. Il suffit de brancher ce repo une fois :
+
+1. Ouvrir **Customize** dans la barre latérale, onglet **Plugins**.
+2. Dans la section **Personal plugins**, bouton **+** → **Add marketplace** →
+   **Add from a repository**.
+3. Coller `https://github.com/Fermes-En-ViE-FEVE/claude-plugins`.
+4. **Browse plugins** → **Install** sur **check-wording**.
+
+Le skill est ensuite disponible dans le chat web, dans l'onglet Chat de l'app desktop
+et dans Cowork (les hooks et sous-agents, eux, ne tournent que dans Cowork ; ce plugin
+n'en a pas). Comme c'est un marketplace, les mises à jour suivent les push sur `main` :
+rien à refaire à chaque fois.
+
+Plugins réservés aux plans payants (Pro, Max, Team, Enterprise). Sur un plan Free,
+prendre le ZIP ci-dessous.
+
+### Repli : déposer le ZIP du skill
+
+Utile sur un plan Free, ou si on ne veut pas ajouter de marketplace. On perd les mises
+à jour automatiques : il faut retélécharger à chaque évolution du skill.
 
 1. Télécharger
    [`check-wording-skill.zip`](https://github.com/Fermes-En-ViE-FEVE/claude-plugins/releases/download/skill-latest/check-wording-skill.zip)
@@ -38,19 +56,7 @@ passe, et ça marche sur tous les plans, y compris Free et les comptes persos.
 3. Vérifier dans **Settings → Capabilities** que **Code execution and file creation**
    est activé : sans ça, les skills ne tournent pas du tout.
 
-Le skill est ensuite disponible dans Chat et dans Cowork. Il est privé à ton compte :
-chacun fait l'opération une fois de son côté. Pas de mise à jour automatique sur ce
-chemin : quand le skill évolue, retélécharger et réuploader.
-
 Pour refabriquer le ZIP à la main : `./scripts/package-skill.sh check-wording`.
-
-### App desktop Claude, onglet Code
-
-Bouton **+** à côté de la zone de saisie → **Plugins** → **Add plugin** : le navigateur
-de plugins s'ouvre et liste les marketplaces configurés. **Manage plugins** sert à
-activer, désactiver ou désinstaller. Aucune ligne de commande.
-
-Ce navigateur n'existe pas dans les sessions cloud (voir le ZIP pour celles-là).
 
 ### Claude Code en terminal
 
@@ -69,6 +75,9 @@ Ce navigateur n'existe pas dans les sessions cloud (voir le ZIP pour celles-là)
 
 Ensuite, le skill se déclenche tout seul quand c'est pertinent, ou s'invoque via
 `/check-wording:check-wording`.
+
+Dans l'onglet Code de l'app desktop, le même marketplace s'ajoute au bouton **+** →
+**Plugins** → **Add plugin**.
 
 ### Si Feve passe un jour sur un plan Team ou Enterprise
 
@@ -114,10 +123,15 @@ version. `claude plugin validate` émet un avertissement à ce sujet : il est at
 Si un jour on veut des versions figées, il faudra remettre `version` dans
 `plugin.json`, la bumper à chaque release et taguer avec `claude plugin tag`.
 
-- **Manuelle** : `/plugin marketplace update feve` puis `/reload-plugins`
+Selon le chemin d'installation :
+
+- **Marketplace ajouté dans Customize** (Chat, Cowork) : rien à faire, la
+  synchronisation suit les push sur `main`.
+- **Claude Code** : `/plugin marketplace update feve` puis `/reload-plugins`
   (`--force` si Claude Code prévient que le rechargement relit la conversation).
-- **Auto** : activable par marketplace dans `/plugin` → **Marketplaces** →
-  **Enable auto-update**. Désactivé par défaut sur les marketplaces tiers.
+  L'auto-update s'active par marketplace dans `/plugin` → **Marketplaces** →
+  **Enable auto-update** ; il est désactivé par défaut sur les marketplaces tiers.
+- **ZIP du skill** : aucune mise à jour automatique, il faut retélécharger.
 
 ## Structure
 
