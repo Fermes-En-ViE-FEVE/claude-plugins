@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
-# Fabrique le ZIP à déposer dans Customize > Skills sur claude.ai.
-# Le ZIP doit contenir le DOSSIER du skill à sa racine (pas SKILL.md directement).
+# Fabrique le ZIP à déposer dans Customize > Skills sur claude.ai (repli pour les
+# plans Free, qui n'ont pas droit aux plugins).
+# Le ZIP doit contenir le DOSSIER du skill à sa racine, pas SKILL.md directement.
 set -euo pipefail
 
-SKILL="${1:-check-wording}"
+PLUGIN="${1:-feve-relecture}"
+SKILL="${2:-relecture}"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SRC="$ROOT/plugins/$SKILL/skills/$SKILL"
-OUT="$ROOT/dist/$SKILL-skill.zip"
+SRC="$ROOT/plugins/$PLUGIN/skills/$SKILL"
+OUT="$ROOT/dist/$PLUGIN-skill.zip"
 
 [ -f "$SRC/SKILL.md" ] || { echo "Skill introuvable : $SRC/SKILL.md" >&2; exit 1; }
 

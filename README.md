@@ -11,7 +11,7 @@ C'est le remplaçant propre de l'ancien système (symlinks `~/.claude/skills/` �
 
 | Plugin | Pour qui | Ce que ça fait |
 |---|---|---|
-| **check-wording** | Communication, marketing, tout le monde | Relit un texte FR (email, post, page, copie) : orthographe, typo française, registre (tu/vous), ton. Demande le contexte d'abord, puis rapport priorisé. |
+| **feve-relecture** | Communication, marketing, tout le monde | Relit un texte FR (email, post, page, copie) : orthographe, typo française, registre (tu/vous), ton. Demande le contexte d'abord, puis rapport priorisé. |
 
 ## Installation
 
@@ -33,7 +33,7 @@ catalogue Anthropic. Il suffit de brancher ce repo une fois :
 2. Dans la section **Personal plugins**, bouton **+** → **Add marketplace** →
    **Add from a repository**.
 3. Coller `https://github.com/Fermes-En-ViE-FEVE/claude-plugins`.
-4. **Browse plugins** → **Install** sur **check-wording**.
+4. **Browse plugins** → **Install** sur **feve-relecture**.
 
 Le skill est ensuite disponible dans le chat web, dans l'onglet Chat de l'app desktop
 et dans Cowork (les hooks et sous-agents, eux, ne tournent que dans Cowork ; ce plugin
@@ -49,14 +49,14 @@ Utile sur un plan Free, ou si on ne veut pas ajouter de marketplace. On perd les
 à jour automatiques : il faut retélécharger à chaque évolution du skill.
 
 1. Télécharger
-   [`check-wording-skill.zip`](https://github.com/Fermes-En-ViE-FEVE/claude-plugins/releases/download/skill-latest/check-wording-skill.zip)
+   [`feve-relecture-skill.zip`](https://github.com/Fermes-En-ViE-FEVE/claude-plugins/releases/download/skill-latest/feve-relecture-skill.zip)
    (regénéré à chaque modification du skill).
 2. Aller sur [claude.ai → Customize → Skills](https://claude.ai/customize/skills)
    et l'uploader.
 3. Vérifier dans **Settings → Capabilities** que **Code execution and file creation**
    est activé : sans ça, les skills ne tournent pas du tout.
 
-Pour refabriquer le ZIP à la main : `./scripts/package-skill.sh check-wording`.
+Pour refabriquer le ZIP à la main : `./scripts/package-skill.sh`.
 
 ### Claude Code en terminal
 
@@ -67,14 +67,14 @@ Pour refabriquer le ZIP à la main : `./scripts/package-skill.sh check-wording`.
 /plugin marketplace add /chemin/vers/claude-plugins
 
 # 2. Installer le plugin
-/plugin install check-wording@feve
+/plugin install feve-relecture@feve
 ```
 
 > Le `@feve` réfère au **nom du marketplace** (défini dans `marketplace.json`),
 > pas au slug GitHub. C'est voulu : `add` prend le slug du repo, `install` le nom du marketplace.
 
 Ensuite, le skill se déclenche tout seul quand c'est pertinent, ou s'invoque via
-`/check-wording:check-wording`.
+`/feve-relecture:relecture`.
 
 Dans l'onglet Code de l'app desktop, le même marketplace s'ajoute au bouton **+** →
 **Plugins** → **Add plugin**.
@@ -102,7 +102,7 @@ au `.claude/settings.json` **du repo concerné** :
     }
   },
   "enabledPlugins": {
-    "check-wording@feve": true
+    "feve-relecture@feve": true
   }
 }
 ```
@@ -110,7 +110,7 @@ au `.claude/settings.json` **du repo concerné** :
 Une fois le dossier approuvé, Claude Code ajoute le marketplace sans demander. En
 revanche, depuis la v2.1.195, il **n'installe pas** tout seul un plugin dont la source
 est externe (un repo GitHub) : il le signale comme non installé et affiche la commande
-à lancer, `claude plugin install check-wording@feve`. Le réglage évite donc l'étape
+à lancer, `claude plugin install feve-relecture@feve`. Le réglage évite donc l'étape
 « ajouter le marketplace », pas l'installation.
 
 ## Mises à jour
@@ -140,10 +140,10 @@ claude-plugins/
 ├── .claude-plugin/
 │   └── marketplace.json          ← catalogue des plugins
 ├── plugins/
-│   └── check-wording/
+│   └── feve-relecture/
 │       ├── .claude-plugin/plugin.json
 │       └── skills/
-│           └── check-wording/
+│           └── relecture/
 │               ├── SKILL.md       ← instructions du skill
 │               ├── scripts/check-fr.py
 │               └── references/ton-de-voix-feve.md

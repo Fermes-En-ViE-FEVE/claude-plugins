@@ -1,6 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
-  "name": "check-wording",
+  "name": "feve-relecture",
+  "displayName": "Feve Relecture",
   "description": "Relecture de communication écrite en français : orthographe, typographie, registre (tutoiement/vouvoiement) et ton, adaptée au contexte fourni par l'utilisateur. Charte de ton Feve embarquée.",
   "author": {
     "name": "Feve"

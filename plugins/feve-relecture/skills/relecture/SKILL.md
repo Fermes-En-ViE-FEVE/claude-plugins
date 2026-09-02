@@ -1,5 +1,5 @@
 ---
-name: check-wording
+name: relecture
 description: >-
   Relit et corrige une communication écrite en français (email, post LinkedIn,
   page web, copie produit, message in-app) : orthographe, grammaire, typographie

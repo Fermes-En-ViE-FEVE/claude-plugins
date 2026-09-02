@@ -1,4 +1,4 @@
-# check-wording
+# Feve Relecture (`feve-relecture`)
 
 Skill Claude Code pour relire une **communication écrite en français** avant
 envoi/publication : orthographe, grammaire, typographie française, cohérence du
@@ -22,7 +22,7 @@ lancement, puis adapte son analyse.
 
 ## Utilisation
 
-Dans Claude Code, s'invoque via `/check-wording:check-wording` ou se déclenche
+Dans Claude Code, s'invoque via `/feve-relecture:relecture` ou se déclenche
 automatiquement quand on demande de relire un texte. Dans Chat et Cowork, il faut
 d'abord l'avoir déposé sur son compte claude.ai (voir
 [l'installation](../../README.md#chat-et-cowork--déposer-le-zip-du-skill)). Le skill :
@@ -42,5 +42,5 @@ d'abord l'avoir déposé sur son compte claude.ai (voir
 ## Source de vérité du ton de voix
 
 La charte transverse vit dans
-[`skills/check-wording/references/ton-de-voix-feve.md`](skills/check-wording/references/ton-de-voix-feve.md).
+[`skills/relecture/references/ton-de-voix-feve.md`](skills/relecture/references/ton-de-voix-feve.md).
 La modifier ici + push = nouvelle version pour toute l'équipe.

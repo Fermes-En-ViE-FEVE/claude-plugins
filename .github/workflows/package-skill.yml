@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'plugins/check-wording/skills/**'
+      - 'plugins/feve-relecture/skills/**'
       - 'scripts/package-skill.sh'
       - '.github/workflows/package-skill.yml'
   workflow_dispatch: {}
@@ -22,13 +22,13 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Fabrique le ZIP
-        run: ./scripts/package-skill.sh check-wording
+        run: ./scripts/package-skill.sh
 
       - name: Publie sur la release skill-latest
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create skill-latest dist/check-wording-skill.zip \
-            --title "check-wording (skill, derniere version)" \
+          gh release create skill-latest dist/feve-relecture-skill.zip \
+            --title "Feve Relecture (skill, derniere version)" \
             --notes "ZIP a deposer dans Customize > Skills sur claude.ai. Regenere a chaque push sur main." \
-          || gh release upload skill-latest dist/check-wording-skill.zip --clobber
+          || gh release upload skill-latest dist/feve-relecture-skill.zip --clobber
