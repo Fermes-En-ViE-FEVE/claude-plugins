@@ -1,46 +1,16 @@
-# Feve Relecture (`feve-relecture`)
+# Feve Relecture
 
-Skill Claude Code pour relire une **communication écrite en français** avant
-envoi/publication : orthographe, grammaire, typographie française, cohérence du
-**registre** (tutoiement / vouvoiement) et conformité au **ton de voix Feve**.
+Relit une communication écrite en français avant envoi : orthographe et grammaire
+(LanguageTool), typographie française (espaces insécables, guillemets, apostrophes),
+cohérence du registre tu/vous, et ton selon la charte Feve.
 
-Conçu pour **tous les applicatifs Feve** : le skill ne présume jamais le registre
-ni le ton (ils varient d'un produit à l'autre) — il **demande le contexte** au
-lancement, puis adapte son analyse.
+Le registre et le ton ne sont jamais présumés (ils varient d'un applicatif à l'autre) :
+le skill demande le contexte, rend un rapport priorisé, et ne corrige rien sans accord.
 
-> Successeur de l'ancien slash command `/check-wording` du repo `landings`, généralisé
-> et rendu autonome (charte de ton embarquée, plus de dépendance à `src/*.html`).
+S'invoque via `/feve-relecture:relecture`, ou se déclenche seul quand on demande une
+relecture. Nécessite Python 3 et un accès réseau pour la passe LanguageTool ; sans eux,
+la typographie et le ton restent analysés.
 
-## Ce que ça couvre
-
-- **Orthographe / grammaire** — via LanguageTool (FR-FR).
-- **Typographie française** — espaces insécables (`?` `!` `;` `:` `«` `»`),
-  guillemets `« »`, apostrophe courbe `’`, tiret cadratin `—`, ligatures `œ`.
-- **Registre** — détecte objectivement un mélange tu/vous, vérifie vs le registre voulu.
-- **Ton de voix** — vocabulaire à bannir, preuve > promesse, longueur, parallélisme,
-  selon la charte transverse embarquée (`references/ton-de-voix-feve.md`).
-
-## Utilisation
-
-Dans Claude Code, s'invoque via `/feve-relecture:relecture` ou se déclenche
-automatiquement quand on demande de relire un texte. Dans Chat et Cowork, il faut
-d'abord l'avoir déposé sur son compte claude.ai (voir
-[l'installation](../../README.md#chat-et-cowork--déposer-le-zip-du-skill)). Le skill :
-
-1. récupère le texte (collé ou chemin de fichier) ;
-2. **demande** le registre, le ton visé et l'audience ;
-3. lance l'analyse (script + charte) ;
-4. rend un **rapport priorisé** ;
-5. **ne corrige rien** sans ton accord.
-
-## Prérequis
-
-- **Python 3** (pour la passe ortho/typo).
-- **Connexion internet** — appel à [LanguageTool](https://languagetool.org/)
-  (tier gratuit, ~20 req/min). Sans réseau, la typo et le ton restent vérifiables.
-
-## Source de vérité du ton de voix
-
-La charte transverse vit dans
-[`skills/relecture/references/ton-de-voix-feve.md`](skills/relecture/references/ton-de-voix-feve.md).
-La modifier ici + push = nouvelle version pour toute l'équipe.
+La charte de ton vit dans
+[`skills/relecture/references/ton-de-voix-feve.md`](skills/relecture/references/ton-de-voix-feve.md) :
+la modifier ici et pousser suffit à mettre toute l'équipe à jour.
