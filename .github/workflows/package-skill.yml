@@ -1,0 +1,34 @@
+name: Publie le ZIP du skill
+
+# Le ZIP sert aux gens qui n'utilisent pas Claude Code : ils le deposent dans
+# Customize > Skills sur claude.ai. On le regenere a chaque push pour que le lien
+# de telechargement pointe toujours sur la version courante du skill.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'plugins/check-wording/skills/**'
+      - 'scripts/package-skill.sh'
+      - '.github/workflows/package-skill.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Fabrique le ZIP
+        run: ./scripts/package-skill.sh check-wording
+
+      - name: Publie sur la release skill-latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create skill-latest dist/check-wording-skill.zip \
+            --title "check-wording (skill, derniere version)" \
+            --notes "ZIP a deposer dans Customize > Skills sur claude.ai. Regenere a chaque push sur main." \
+          || gh release upload skill-latest dist/check-wording-skill.zip --clobber

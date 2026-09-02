@@ -52,6 +52,10 @@ python3 ${CLAUDE_SKILL_DIR}/scripts/check-fr.py <chemin>
 printf '%s' "<le texte>" | python3 ${CLAUDE_SKILL_DIR}/scripts/check-fr.py --stdin
 ```
 
+> `${CLAUDE_SKILL_DIR}` est substitué par Claude Code. Si tu vois la variable telle
+> quelle (skill installé depuis claude.ai, hors Claude Code), le script est simplement
+> à côté de ce fichier : `scripts/check-fr.py`.
+
 ⏱ ~10-15 s (appel à LanguageTool, tier gratuit). Capture la sortie JSON, parse-la.
 
 Le JSON contient :
@@ -72,6 +76,8 @@ Lis la charte transverse embarquée :
 ```
 ${CLAUDE_SKILL_DIR}/references/ton-de-voix-feve.md
 ```
+
+(même remarque : hors Claude Code, c'est `references/ton-de-voix-feve.md`.)
 
 Puis relis le texte et identifie 0 à 5 passages problématiques selon la charte ET
 le ton/registre demandés à l'étape 1 :

@@ -22,8 +22,10 @@ lancement, puis adapte son analyse.
 
 ## Utilisation
 
-S'invoque via `/check-wording:check-wording` ou se déclenche automatiquement quand on
-demande de relire/corriger un texte. Le skill :
+Dans Claude Code, s'invoque via `/check-wording:check-wording` ou se déclenche
+automatiquement quand on demande de relire un texte. Dans Chat et Cowork, il faut
+d'abord l'avoir déposé sur son compte claude.ai (voir
+[l'installation](../../README.md#chat-et-cowork--déposer-le-zip-du-skill)). Le skill :
 
 1. récupère le texte (collé ou chemin de fichier) ;
 2. **demande** le registre, le ton visé et l'audience ;

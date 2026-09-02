@@ -15,28 +15,44 @@ C'est le remplaçant propre de l'ancien système (symlinks `~/.claude/skills/` �
 
 ## Installation
 
-Trois chemins selon l'outil utilisé. Le premier ne demande aucun terminal.
+Personne n'a le même setup chez Feve (plans persos, Chat, Cowork, un ou deux
+Claude Code). Prends la ligne qui correspond.
 
-### 1. Sans terminal : Claude Chat et Cowork
+| Tu utilises | Ce que tu fais |
+|---|---|
+| Claude Chat ou Cowork | Le ZIP du skill, ci-dessous. Aucune ligne de commande. |
+| L'app desktop, onglet Code | Bouton **+** → **Plugins** → **Add plugin**. |
+| Claude Code en terminal | `/plugin marketplace add` puis `/plugin install`. |
 
-Cowork et les sessions cloud ne lisent pas ce qui est installé sur ta machine :
-ils chargent les skills et plugins **activés sur ton compte claude.ai**, resynchronisés
-au démarrage de chaque session (ils apparaissent alors sous le nom `check-wording@synced`).
+### Chat et Cowork : déposer le ZIP du skill
 
-Ça se règle dans **Customize**, dans la barre latérale de l'app desktop Claude,
-ou depuis les réglages de skills sur claude.ai. Un membre peut y déposer le plugin
-pour lui seul ; pour le diffuser à toute l'équipe d'un coup, voir
-[Diffusion à l'équipe](#diffusion-à-léquipe-team--enterprise) plus bas.
+Cowork et les sessions cloud ne lisent rien de ce qui est installé sur ta machine :
+ils chargent les skills activés sur ton **compte claude.ai**. C'est donc là que ça se
+passe, et ça marche sur tous les plans, y compris Free et les comptes persos.
 
-### 2. App desktop Claude, onglet Code
+1. Télécharger
+   [`check-wording-skill.zip`](https://github.com/Fermes-En-ViE-FEVE/claude-plugins/releases/download/skill-latest/check-wording-skill.zip)
+   (regénéré à chaque modification du skill).
+2. Aller sur [claude.ai → Customize → Skills](https://claude.ai/customize/skills)
+   et l'uploader.
+3. Vérifier dans **Settings → Capabilities** que **Code execution and file creation**
+   est activé : sans ça, les skills ne tournent pas du tout.
+
+Le skill est ensuite disponible dans Chat et dans Cowork. Il est privé à ton compte :
+chacun fait l'opération une fois de son côté. Pas de mise à jour automatique sur ce
+chemin : quand le skill évolue, retélécharger et réuploader.
+
+Pour refabriquer le ZIP à la main : `./scripts/package-skill.sh check-wording`.
+
+### App desktop Claude, onglet Code
 
 Bouton **+** à côté de la zone de saisie → **Plugins** → **Add plugin** : le navigateur
 de plugins s'ouvre et liste les marketplaces configurés. **Manage plugins** sert à
 activer, désactiver ou désinstaller. Aucune ligne de commande.
 
-Ce navigateur n'existe pas dans les sessions cloud (voir le chemin 1 pour celles-là).
+Ce navigateur n'existe pas dans les sessions cloud (voir le ZIP pour celles-là).
 
-### 3. Claude Code en terminal
+### Claude Code en terminal
 
 ```bash
 # 1. Ajouter le marketplace
@@ -54,33 +70,15 @@ Ce navigateur n'existe pas dans les sessions cloud (voir le chemin 1 pour celles
 Ensuite, le skill se déclenche tout seul quand c'est pertinent, ou s'invoque via
 `/check-wording:check-wording`.
 
-## Diffusion à l'équipe (Team / Enterprise)
+### Si Feve passe un jour sur un plan Team ou Enterprise
 
-Sur un plan Team ou Enterprise, un Owner distribue le plugin depuis
-**[Organization settings → Plugins](https://claude.ai/admin-settings/plugins)** sur claude.ai.
-Personne n'a alors de marketplace à gérer : le plugin arrive dans Chat et Cowork,
-soit **installé par défaut**, soit **disponible à l'installation** dans le catalogue,
-selon ce que l'admin choisit.
-
-Deux façons de l'y mettre :
-
-| Méthode | Contrainte |
-|---|---|
-| **Synchroniser ce marketplace** (repo GitHub) | Le repo doit être **privé ou interne**. Un repo public est refusé. La lecture se fait via la Claude GitHub App. |
-| **Uploader le plugin en ZIP** | Aucune contrainte de visibilité. À refaire à chaque mise à jour. |
-
-⚠️ Ce repo est actuellement **public** : la synchronisation de marketplace le refusera
-tant qu'il n'est pas passé en privé. En attendant, l'upload ZIP fonctionne. Pour
-fabriquer l'archive (contenu du dossier du plugin à la racine du ZIP, le format
-que prend aussi `claude --plugin-dir`) :
-
-```bash
-cd plugins/check-wording && zip -r ../../check-wording.zip . -x '*__pycache__*' '*.DS_Store'
-```
-
-Autre règle de la distribution par organisation : pas de dossier `bin/` à la racine
-d'un plugin (les exécutables vont dans `scripts/`, référencés via
-`${CLAUDE_PLUGIN_ROOT}/scripts/<nom>`). C'est déjà le cas ici.
+Un Owner pourrait alors distribuer le plugin à tout le monde d'un coup depuis
+**[Organization settings → Plugins](https://claude.ai/admin-settings/plugins)** :
+plus personne n'aurait de ZIP à télécharger, le skill arriverait installé par défaut
+dans Chat et Cowork. Deux réserves : la synchronisation de marketplace exige un repo
+**privé ou interne** (celui-ci est public, il faudrait le basculer) ou un upload de ZIP
+du plugin, et un plugin distribué par organisation ne doit pas avoir de dossier `bin/`
+à sa racine (ce n'est pas le cas ici).
 
 ## Installation automatique par projet (repos de dev)
 
@@ -127,14 +125,17 @@ Si un jour on veut des versions figées, il faudra remettre `version` dans
 claude-plugins/
 ├── .claude-plugin/
 │   └── marketplace.json          ← catalogue des plugins
-└── plugins/
-    └── check-wording/
-        ├── .claude-plugin/plugin.json
-        └── skills/
-            └── check-wording/
-                ├── SKILL.md       ← instructions du skill
-                ├── scripts/check-fr.py
-                └── references/ton-de-voix-feve.md
+├── plugins/
+│   └── check-wording/
+│       ├── .claude-plugin/plugin.json
+│       └── skills/
+│           └── check-wording/
+│               ├── SKILL.md       ← instructions du skill
+│               ├── scripts/check-fr.py
+│               └── references/ton-de-voix-feve.md
+├── scripts/package-skill.sh      ← fabrique le ZIP pour claude.ai
+├── audit/                        ← audit wording périodique (voir plus bas)
+└── .github/workflows/
 ```
 
 Seul `plugin.json` vit dans `.claude-plugin/`. Tout le reste (`skills/`, `agents/`,
