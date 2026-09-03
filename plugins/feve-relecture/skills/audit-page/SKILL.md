@@ -43,9 +43,16 @@ peux pas trancher, classe le point « à vérifier » au lieu de l'affirmer.
 - Vérifie que les vidéos embarquées existent, en ouvrant l'URL du lecteur.
 - Un accordéon fermé n'existe pas pour `get_page_text` (il lit ce qui est affiché). Pour
   lire son contenu sans tout déplier à la main, prends le `textContent` de l'élément en
-  JS. Le `textContent` de `document.body` entier, lui, aspire aussi le CSS et le JS des
-  balises `<style>`/`<script>` : si une recherche y trouve un `--` ou un `:*`, vérifie
-  l'élément parent avant de le reporter, ça peut être une variable CSS, pas du contenu.
+  JS. Le `textContent` de `document.body` entier, lui, aspire aussi le CSS, le JS des
+  balises `<style>`/`<script>` et les URLs de tracking : cherche plutôt dans les feuilles
+  du DOM (les éléments texte sans enfants), ça évite ce bruit d'un coup.
+- Pour le tiret cadratin/demi-cadratin, cherche le vrai caractère (`—`, `–`), pas
+  seulement `--` en ASCII : un site publié en contient plus souvent en vrai caractère
+  qu'en double tiret tapé au clavier.
+- Deux usages du tiret ne sont pas le tic à corriger : une légende « Nom — Lieu » (une
+  convention de titrage, pas un séparateur de phrase), et le point médian dans une
+  écriture inclusive (« agriculteur·rice », légitime) à distinguer du point médian qui
+  sépare des éléments d'une liste (« Terme A · Terme B », lui est le tic).
 
 ## Passe 2, le fond
 
