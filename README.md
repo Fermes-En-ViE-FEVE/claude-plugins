@@ -5,7 +5,7 @@ monde reçoit les skills communs et leurs mises à jour.
 
 | Plugin | Ce que ça fait |
 |---|---|
-| **Feve Relecture** | Relit un texte français : fautes, cohérence du tutoiement/vouvoiement, et tics d'écriture qui font « écrit par une IA ». Ne corrige rien sans accord. |
+| **Feve Relecture** | Deux skills : `relecture` pour un texte (fautes, registre, cohérence, tics d'IA) et `audit-page` pour une page en ligne (en plus : liens, CTA, parcours). Ne corrigent rien sans accord. |
 
 ## Installer
 

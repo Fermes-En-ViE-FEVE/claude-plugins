@@ -14,6 +14,12 @@ OUT="$ROOT/dist/$PLUGIN-skill.zip"
 
 rm -rf "$ROOT/dist/.pack" && mkdir -p "$ROOT/dist/.pack"
 cp -R "$SRC" "$ROOT/dist/.pack/$SKILL"
+
+# ${CLAUDE_PLUGIN_ROOT} n'existe pas quand le skill est uploade seul sur claude.ai :
+# on embarque les regles partagees dans l'archive, sinon la relecture part sans elles.
+REGLES="$ROOT/plugins/$PLUGIN/regles-ecriture.md"
+[ -f "$REGLES" ] && cp "$REGLES" "$ROOT/dist/.pack/$SKILL/regles-ecriture.md"
+
 find "$ROOT/dist/.pack" \( -name __pycache__ -o -name '.DS_Store' \) -exec rm -rf {} +
 
 rm -f "$OUT"

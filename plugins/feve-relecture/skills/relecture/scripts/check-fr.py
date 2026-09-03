@@ -186,6 +186,17 @@ TYPO_RULES = [
         "Ligature œ manquante",
         "Écris cœur / œuvre / œil / vœu avec la ligature œ",
     ),
+    (
+        # Espaces fines et insécables (U+202F, U+00A0) exclues : elles sont légitimes.
+        re.compile(r"[\u200b\u200c\u200d\ufeff\u00ad]"),
+        "Caractère invisible parasite",
+        "Artefact de copier-coller depuis un éditeur riche : à supprimer",
+    ),
+    (
+        re.compile(r":\*|&(?:nbsp|amp|lt|gt|quot|#39);"),
+        "Artefact de CMS resté brut",
+        "Balisage ou entité HTML affiché tel quel : à corriger à la source du contenu",
+    ),
 ]
 
 

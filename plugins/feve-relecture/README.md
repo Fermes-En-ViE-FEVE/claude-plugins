@@ -1,20 +1,18 @@
 # Feve Relecture
 
-Relit un texte français avant envoi ou publication. Trois choses, pas plus :
+Deux skills qui partagent les mêmes règles d'écriture, dans
+[`regles-ecriture.md`](regles-ecriture.md) à la racine du plugin. On modifie une règle
+là, les deux suivent.
 
-1. **Fautes** : orthographe, grammaire, conjugaison (LanguageTool), et typographie
-   française (espaces insécables, guillemets, apostrophes).
-2. **Registre** : on vouvoie par défaut chez Feve, sauf sur La Grange où on tutoie les
-   porteurs de projet. Le skill signale un mélange tu/vous et un registre inadapté, et
-   demande le destinataire s'il ne le devine pas.
-3. **Tics d'IA** : tiret cadratin en séparateur, point médian, connecteurs mécaniques,
-   phrases toutes calibrées pareil.
+| Skill | Pour quoi | Où |
+|---|---|---|
+| [`relecture`](skills/relecture/) | Un texte qu'on colle ou un fichier : fautes, registre, cohérence, tics d'IA. | Partout, Chat compris |
+| [`audit-page`](skills/audit-page/) | Une page en ligne depuis son URL : en plus, liens et CTA réellement cliqués, contenu invisible pour Google, cohérence du parcours. | Claude Code et Cowork, il faut un navigateur |
 
-S'invoque via `/feve-relecture:relecture`, ou se déclenche seul quand on demande une
-relecture. Il ne corrige rien sans accord.
+S'invoquent via `/feve-relecture:relecture` et `/feve-relecture:audit-page`, ou se
+déclenchent seuls quand on demande une relecture. Aucun des deux ne corrige sans accord.
 
 La détection des fautes repose sur un appel à [LanguageTool](https://languagetool.org/),
-donc sur un accès réseau : coupé d'internet, il ne reste que la typographie et le
-comptage tu/vous, calculés en local. Le script qui porte tout ça est en Python, mais
-sans aucune dépendance à installer (bibliothèque standard uniquement), et Python 3 est
-déjà présent sur macOS, sur Linux et dans le bac à sable de claude.ai.
+donc sur un accès réseau : coupé d'internet, il reste la typographie et le comptage
+tu/vous, calculés en local. Le script est en Python, sans aucune dépendance à installer,
+et Python 3 est déjà présent sur macOS, sur Linux et dans le bac à sable de claude.ai.
