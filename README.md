@@ -30,9 +30,13 @@ dans [Customize → Skills](https://claude.ai/customize/skills), après avoir ac
 Les manifestes ne déclarent pas de `version` : renseignée, elle épinglerait le
 plugin jusqu'au prochain bump. Chaque push sur `main` fait donc une nouvelle version.
 
-- Marketplace ajouté dans Customize : rien à faire.
-- Claude Code : `/plugin marketplace update feve` puis `/reload-plugins`.
-- ZIP : retélécharger.
+- **Marketplace (Chat, Cowork)** : coche la mise à jour automatique proposée à
+  l'ajout du marketplace, et il n'y a plus rien à faire. Sinon, passe par le menu
+  du marketplace dans Personnaliser pour le resynchroniser à la main.
+- **Claude Code** : `/plugin marketplace update feve` puis `/reload-plugins`.
+  L'auto-update s'active par marketplace dans `/plugin`, onglet Marketplaces.
+- **ZIP** (repli plan Free uniquement) : rien ne se met à jour tout seul, un
+  fichier déposé n'a pas de source à surveiller. Il faut le retélécharger.
 
 ## Ajouter un plugin
 

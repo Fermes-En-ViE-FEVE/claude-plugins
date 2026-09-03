@@ -11,5 +11,10 @@ Relit un texte français avant envoi ou publication. Trois choses, pas plus :
    phrases toutes calibrées pareil.
 
 S'invoque via `/feve-relecture:relecture`, ou se déclenche seul quand on demande une
-relecture. Il ne corrige rien sans accord. Nécessite Python 3 et un accès réseau pour la
-passe LanguageTool ; sans eux, le reste est quand même analysé.
+relecture. Il ne corrige rien sans accord.
+
+La détection des fautes repose sur un appel à [LanguageTool](https://languagetool.org/),
+donc sur un accès réseau : coupé d'internet, il ne reste que la typographie et le
+comptage tu/vous, calculés en local. Le script qui porte tout ça est en Python, mais
+sans aucune dépendance à installer (bibliothèque standard uniquement), et Python 3 est
+déjà présent sur macOS, sur Linux et dans le bac à sable de claude.ai.
