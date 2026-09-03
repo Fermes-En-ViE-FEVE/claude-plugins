@@ -9,9 +9,9 @@ monde reçoit les skills communs et leurs mises à jour.
 
 ## Installer
 
-**Chat ou Cowork.** Customize → onglet **Plugins** → **+** → **Add marketplace** →
-**Add from a repository**, avec `https://github.com/Fermes-En-ViE-FEVE/claude-plugins`.
-Puis **Browse plugins** → **Install**.
+**Chat ou Cowork.** Depuis **claude.ai dans le navigateur** (l'app desktop échoue) :
+**Personnaliser** → onglet **Plugins** → **Ajouter** → depuis un dépôt, avec
+`Fermes-En-ViE-FEVE/claude-plugins`. Puis **Découvrir** → **Installer**.
 
 **Claude Code.**
 
@@ -43,8 +43,3 @@ plugin jusqu'au prochain bump. Chaque push sur `main` fait donc une nouvelle ver
 3. `claude plugin validate .`, puis commit et push.
 
 `./scripts/package-skill.sh` refabrique le ZIP d'un skill pour claude.ai.
-
-## Audit wording
-
-[`audit/`](audit/README.md) : le pendant non interactif du skill, un cron GitHub
-Actions qui relit les pages publiques Feve et poste un rapport sur Slack.
