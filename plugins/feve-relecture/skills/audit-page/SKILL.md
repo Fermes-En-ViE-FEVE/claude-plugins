@@ -19,11 +19,16 @@ Ouvre la page dans le navigateur, en 1440px. Ne juge jamais sur une capture seul
 croise toujours avec `get_page_text` (le texte réellement affiché) et `read_page`
 (l'arbre d'accessibilité, qui expose aussi les accordéons fermés).
 
-**Un `href="#"` est un déclencheur de vérification, jamais une conclusion.** Pour une
-popup, clique et relis la page : si rien de neuf n'apparaît, c'est cassé. Pour une ancre
-`#nom`, vérifie la cible avec `javascript_tool` (`document.querySelector('#nom')`),
-surtout pas en cherchant le mot dans le texte visible, un id n'a aucune raison d'y
-figurer. Si tu ne peux pas trancher, classe le point « à vérifier » au lieu de l'affirmer.
+**Un `href="#"` est un déclencheur de vérification, jamais une conclusion.** Avant de
+cliquer, regarde ses attributs en JS (`aria-haspopup`, `data-mm`, une classe contenant
+« modal-trigger ») : ça suffit souvent à conclure « popup légitime » sans dépenser un
+clic. Sinon clique pour de vrai et relis la page : rien de neuf n'apparaît, c'est cassé.
+Un clic simulé en JS (`element.click()`) ne suffit pas à conclure « cassé », certains
+frameworks ignorent les clics non issus d'un vrai geste souris ; utilise `computer` avec
+des coordonnées à l'écran pour le clic qui tranche. Pour une ancre `#nom`, vérifie la
+cible avec `javascript_tool` (`document.querySelector('#nom')`), surtout pas en
+cherchant le mot dans le texte visible, un id n'a aucune raison d'y figurer. Si tu ne
+peux pas trancher, classe le point « à vérifier » au lieu de l'affirmer.
 
 ## Passe 1, mécanique
 
@@ -36,6 +41,11 @@ figurer. Si tu ne peux pas trancher, classe le point « à vérifier » au lieu 
   image sans texte alternatif : invisible pour Google et les lecteurs d'écran. Grave si
   c'est un bloc entier, par exemple un tableau comparatif.
 - Vérifie que les vidéos embarquées existent, en ouvrant l'URL du lecteur.
+- Un accordéon fermé n'existe pas pour `get_page_text` (il lit ce qui est affiché). Pour
+  lire son contenu sans tout déplier à la main, prends le `textContent` de l'élément en
+  JS. Le `textContent` de `document.body` entier, lui, aspire aussi le CSS et le JS des
+  balises `<style>`/`<script>` : si une recherche y trouve un `--` ou un `:*`, vérifie
+  l'élément parent avant de le reporter, ça peut être une variable CSS, pas du contenu.
 
 ## Passe 2, le fond
 
@@ -46,6 +56,9 @@ figurer. Si tu ne peux pas trancher, classe le point « à vérifier » au lieu 
 - **Routage par audience.** Un porteur de projet ne doit jamais atterrir sur du contenu
   écrit pour des investisseurs, ni l'inverse.
 - **Chiffres.** Recoupe tout chiffre ou date avec le reste du site, la home faisant foi.
+  Si un même bloc (footer, widget carte, module témoignages) revient sur plusieurs pages,
+  compare-le d'une page à l'autre : ça dit si un souci est propre à cette page ou vient
+  d'un composant partagé, et une seule correction règle alors tout le site d'un coup.
 - **Hors sujet.** Un argument qui ne sert ni la compréhension ni la conversion à cet
   endroit précis, même s'il n'est faux nulle part.
 - **Preuve sociale.** Un témoignage doit illustrer le problème que Feve a résolu, pas
