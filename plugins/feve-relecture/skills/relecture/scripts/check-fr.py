@@ -65,7 +65,7 @@ class TextExtractor(HTMLParser):
         self._pending_space = False
 
     def _flush_pending(self, nxt: str = "") -> None:
-        """Matérialise une séparation inline en espace — sauf si ça collerait à
+        """Matérialise une séparation inline en espace, sauf si ça collerait à
         une élision (l'/d'/j'…) ou si le texte suivant démarre par une ponctuation
         qui s'attache au mot précédent (« mot . » → « mot. »)."""
         if not self._pending_space:
@@ -143,12 +143,12 @@ TYPO_RULES = [
     ),
     (
         re.compile(r'"([^"]{2,200})"'),
-        "Guillemets droits anglais — utiliser les guillemets français",
+        "Guillemets droits anglais : utiliser les guillemets français",
         "Remplace par « … » (avec espaces insécables à l'intérieur)",
     ),
     (
         re.compile(r"(\w)'(\w)"),
-        "Apostrophe droite — utiliser l'apostrophe courbe",
+        "Apostrophe droite : utiliser l'apostrophe courbe",
         "Remplace ' par ’ (U+2019)",
     ),
     (

@@ -1,4 +1,4 @@
-# Feve — plugins Claude Code
+# Feve, plugins Claude Code
 
 Marketplace des plugins partagés chez Feve. Une source de vérité en git, tout le
 monde reçoit les skills communs et leurs mises à jour.
