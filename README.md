@@ -5,7 +5,7 @@ monde reçoit les skills communs et leurs mises à jour.
 
 | Plugin | Ce que ça fait |
 |---|---|
-| **Feve Relecture** | Relit un texte français (email, post, page, copie) : orthographe, typographie, registre tu/vous, ton. Demande le contexte, puis rend un rapport priorisé. |
+| **Feve Relecture** | Relit un texte français : fautes, cohérence du tutoiement/vouvoiement, et tics d'écriture qui font « écrit par une IA ». Ne corrige rien sans accord. |
 
 ## Installer
 
