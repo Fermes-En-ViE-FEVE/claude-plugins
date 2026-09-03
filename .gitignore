@@ -8,8 +8,6 @@ __pycache__/
 .env
 .env.local
 
-# Etat runtime de l'audit (delta run-vs-run)
-audit/.state/
 
 # ZIP du skill fabrique par scripts/package-skill.sh
 dist/
