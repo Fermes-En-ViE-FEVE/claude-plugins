@@ -11,7 +11,7 @@
     {
       "name": "feve-relecture",
       "source": "./plugins/feve-relecture",
-      "description": "Relit un texte en français (email, post, page, copie) : orthographe, typographie française, cohérence du registre (tutoiement/vouvoiement) et conformité au ton. Demande d'abord le contexte puis produit un rapport priorisé.",
+      "description": "Relit un texte en français : fautes d'orthographe, de grammaire et de conjugaison, cohérence du tutoiement/vouvoiement, et tics d'écriture qui font « écrit par une IA ».",
       "category": "communication",
       "author": {
         "name": "Feve"

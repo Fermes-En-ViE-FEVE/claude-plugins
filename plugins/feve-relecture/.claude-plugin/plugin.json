@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "feve-relecture",
-  "description": "Relecture de communication écrite en français : orthographe, typographie, registre (tutoiement/vouvoiement) et ton, adaptée au contexte fourni par l'utilisateur. Charte de ton Feve embarquée.",
+  "description": "Relit un texte en français : fautes d'orthographe, de grammaire et de conjugaison, cohérence du tutoiement/vouvoiement, et tics d'écriture qui font « écrit par une IA ».",
   "author": {
     "name": "Feve"
   },
@@ -9,8 +9,8 @@
   "keywords": [
     "relecture",
     "orthographe",
-    "typographie",
-    "ton de voix",
+    "tutoiement",
+    "vouvoiement",
     "communication",
     "français"
   ]

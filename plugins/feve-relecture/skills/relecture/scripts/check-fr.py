@@ -4,7 +4,7 @@
 Généraliste : accepte du texte collé (--stdin) ou un fichier (.txt, .md, .html).
 Le HTML est nettoyé pour ne garder que le texte visible. Le ton de voix vs charte
 (vocabulaire à bannir, preuve > promesse, etc.) est évalué SÉPARÉMENT par Claude
-dans le skill `check-wording` — ce script ne traite QUE ce qui est scriptable de façon
+dans le skill `relecture` : ce script ne traite QUE ce qui est scriptable de façon
 fiable : orthographe, typo française, et un signal objectif sur le registre
 (comptage des marqueurs tutoiement vs vouvoiement).
 
@@ -152,9 +152,14 @@ TYPO_RULES = [
         "Remplace ' par ’ (U+2019)",
     ),
     (
-        re.compile(r"(?<!-)--(?!-)"),
-        "Double tiret — utiliser le tiret cadratin",
-        "Remplace -- par — (tiret cadratin)",
+        re.compile(r"\s[\u2014\u2013]\s|(?<!-)--(?!-)"),
+        "Tiret en séparateur : marqueur d'écriture IA",
+        "Remplace par deux-points, virgule, parenthèses ou une nouvelle phrase",
+    ),
+    (
+        re.compile(r"\s\u00b7\s"),
+        "Point médian en séparateur : marqueur d'écriture IA",
+        "Remplace par une virgule ou une nouvelle phrase",
     ),
     (
         re.compile(r"([«])(?! | )"),
