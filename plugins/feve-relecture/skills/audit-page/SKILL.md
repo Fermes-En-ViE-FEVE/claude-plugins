@@ -40,7 +40,10 @@ peux pas trancher, classe le point « à vérifier » au lieu de l'affirmer.
 ## Passe 1, mécanique
 
 - Liste les liens (`read_page`, filtre interactif), clique les CTA principaux et tout
-  « en savoir plus », « voir plus », « FAQ complète ». Un saut suffit pour juger.
+  « en savoir plus », « voir plus », « FAQ complète ». Un saut suffit pour juger. Un CTA
+  qui marche à la souris peut ne pas être une vraie balise `<a>`/`<button>` (un `div`
+  avec juste un gestionnaire de clic) : invisible au clavier et aux lecteurs d'écran.
+  Vérifie en JS (`element.tagName`, `element.tabIndex`) sur chaque CTA principal.
 - Déplie chaque accordéon et lis la réponse entière.
 - Cherche les artefacts de CMS restés bruts (`:*`, `**`, balises échappées) et les
   phrases cassées (ponctuation orpheline, mot manquant).
@@ -62,6 +65,11 @@ peux pas trancher, classe le point « à vérifier » au lieu de l'affirmer.
   convention de titrage, pas un séparateur de phrase), et le point médian dans une
   écriture inclusive (« agriculteur·rice », légitime) à distinguer du point médian qui
   sépare des éléments d'une liste (« Terme A · Terme B », lui est le tic).
+- Cherche aussi les caractères invisibles parasites (`​`, `‌`, `‍`,
+  `﻿`, `­`, en excluant les espaces fines/insécables qui sont légitimes) dans
+  les feuilles du DOM : artefacts de copier-coller depuis un éditeur riche, aucun impact
+  visuel mais polluent le texte source. Le script `check-fr.py` de `relecture` les
+  détecte déjà sur un texte collé ; ici il faut les chercher toi-même dans le DOM.
 
 ## Passe 2, le fond
 
