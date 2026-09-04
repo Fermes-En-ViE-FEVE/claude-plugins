@@ -4,6 +4,10 @@ Deux skills qui partagent les mêmes règles d'écriture, dans
 [`regles-ecriture.md`](regles-ecriture.md) à la racine du plugin. On modifie une règle
 là, les deux suivent.
 
+`audit-page` tient en plus [`reperes-feve.md`](reperes-feve.md) : ce qu'on a compris du
+site au fil des audits (comment tel chiffre se met à jour, quel bug vient d'un composant
+partagé) pour ne pas le redécouvrir à chaque passage.
+
 | Skill | Pour quoi | Où |
 |---|---|---|
 | [`relecture`](skills/relecture/) | Un texte qu'on colle ou un fichier : fautes, registre, cohérence, tics d'IA. | Partout, Chat compris |
