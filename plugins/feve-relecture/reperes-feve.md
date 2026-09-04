@@ -35,6 +35,4 @@ corriger la ligne plutôt que la dupliquer.
 
 | Date | Pages | Points (Haute/Moyenne/Faible) | Notes |
 |---|---|---|---|
-| 2026-09-02 | 3 (audit humain, Marc) | 5H / 4M / 8F | Sur /investir, /installation/je-finance-ma-ferme, /installation/acheter-terres-agricoles |
-| 2026-09-03 | 32 (feve-relecture:audit-page) | voir `audit-feve-pages-statiques.md` | Pages statiques principales hors collections. 3 des 5 points Haute/Moyenne de Marc sur je-finance-ma-ferme encore ouverts le lendemain |
-| 2026-09-03 | 3 (comparaison avec l'audit de Marc) | 3 nouveaux points | Comparé ligne à ligne avec le xlsx de Marc (25 points, 3 pages). 5 manques trouvés : 2 vrais trous de règle (lien qui marche à la souris mais pas une vraie balise interactive, caractères invisibles jamais cherchés dans le DOM), les 3 autres des ratés d'exécution ou déjà corrigés en prod. Les 2 règles ajoutées au skill, les 3 ratés reconfirmés en repassant les pages en entier |
+| 2026-09-03 | 32 (feve-relecture:audit-page) | voir `audit-feve-pages-statiques.md` | Pages statiques principales hors collections |
