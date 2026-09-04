@@ -7,8 +7,8 @@ on:
   push:
     branches: [main]
     paths:
-      - 'plugins/feve-relecture/skills/**'
-      - 'plugins/feve-relecture/regles-ecriture.md'
+      - 'plugins/feve-editorial/skills/**'
+      - 'plugins/feve-editorial/regles-ecriture.md'
       - 'scripts/package-skill.sh'
       - '.github/workflows/package-skill.yml'
   workflow_dispatch: {}
@@ -29,7 +29,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create skill-latest dist/feve-relecture-skill.zip \
+          gh release create skill-latest dist/feve-editorial-skill.zip \
             --title "Feve Relecture (skill, derniere version)" \
             --notes "ZIP a deposer dans Customize > Skills sur claude.ai. Regenere a chaque push sur main." \
-          || gh release upload skill-latest dist/feve-relecture-skill.zip --clobber
+          || gh release upload skill-latest dist/feve-editorial-skill.zip --clobber

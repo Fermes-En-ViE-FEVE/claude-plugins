@@ -4,7 +4,7 @@
 # Le ZIP doit contenir le DOSSIER du skill à sa racine, pas SKILL.md directement.
 set -euo pipefail
 
-PLUGIN="${1:-feve-relecture}"
+PLUGIN="${1:-feve-editorial}"
 SKILL="${2:-relecture}"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SRC="$ROOT/plugins/$PLUGIN/skills/$SKILL"

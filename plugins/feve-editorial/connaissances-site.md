@@ -35,4 +35,4 @@ corriger la ligne plutôt que la dupliquer.
 
 | Date | Pages | Points (Haute/Moyenne/Faible) | Notes |
 |---|---|---|---|
-| 2026-09-03 | 32 (feve-relecture:audit-page) | voir `audit-feve-pages-statiques.md` | Pages statiques principales hors collections |
+| 2026-09-03 | 32 (feve-editorial:audit-page) | voir `audit-feve-pages-statiques.md` | Pages statiques principales hors collections |

@@ -9,9 +9,9 @@
   },
   "plugins": [
     {
-      "name": "feve-relecture",
-      "source": "./plugins/feve-relecture",
-      "description": "Relit un texte en français : fautes d'orthographe, de grammaire et de conjugaison, cohérence du tutoiement/vouvoiement, et tics d'écriture qui font « écrit par une IA ».",
+      "name": "feve-editorial",
+      "source": "./plugins/feve-editorial",
+      "description": "Deux skills de qualité éditoriale en français : relire un texte avant envoi (fautes, tutoiement/vouvoiement, tics d'écriture IA) et auditer une page du site en ligne (liens et CTA cliqués, contenu invisible pour Google, cohérence du parcours).",
       "category": "communication",
       "author": {
         "name": "Feve"

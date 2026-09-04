@@ -5,7 +5,7 @@ monde reçoit les skills communs et leurs mises à jour.
 
 | Plugin | Ce que ça fait |
 |---|---|
-| **Feve Relecture** | Deux skills : `relecture` pour un texte (fautes, registre, cohérence, tics d'IA) et `audit-page` pour une page en ligne (en plus : liens, CTA, parcours). Ne corrigent rien sans accord. |
+| **Feve Editorial** (`feve-editorial`) | Deux skills : `relecture` pour un texte (fautes, registre, cohérence, tics d'IA) et `audit-page` pour une page en ligne (en plus : liens, CTA, parcours). Ne corrigent rien sans accord. |
 
 ## Installer
 
@@ -17,11 +17,11 @@ monde reçoit les skills communs et leurs mises à jour.
 
 ```bash
 /plugin marketplace add Fermes-En-ViE-FEVE/claude-plugins
-/plugin install feve-relecture@feve
+/plugin install feve-editorial@feve
 ```
 
 **Plan Free.** Les plugins demandent un plan payant, pas les skills : déposer
-[le ZIP du skill](https://github.com/Fermes-En-ViE-FEVE/claude-plugins/releases/download/skill-latest/feve-relecture-skill.zip)
+[le ZIP du skill](https://github.com/Fermes-En-ViE-FEVE/claude-plugins/releases/download/skill-latest/feve-editorial-skill.zip)
 dans [Customize → Skills](https://claude.ai/customize/skills), après avoir activé
 **Code execution and file creation** dans Settings → Capabilities.
 

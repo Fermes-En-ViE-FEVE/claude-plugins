@@ -13,7 +13,7 @@ est celle qui a de la valeur.
 Les règles d'écriture sont dans `${CLAUDE_PLUGIN_ROOT}/regles-ecriture.md`. Lis-les, elles
 s'appliquent au texte de la page comme à n'importe quel texte.
 
-Avant de commencer, lis aussi `${CLAUDE_PLUGIN_ROOT}/reperes-feve.md` : mécanismes déjà
+Avant de commencer, lis aussi `${CLAUDE_PLUGIN_ROOT}/connaissances-site.md` : mécanismes déjà
 compris (comment tel chiffre se met à jour, quel bug vient d'un composant partagé) et
 blocs de contenu déjà repérés comme réutilisés. Ça évite de redécouvrir à chaque fois ce
 qui est déjà su. À la fin de l'audit, ajoute-y ce que tu as appris (nouveau mécanisme,
